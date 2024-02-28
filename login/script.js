@@ -1,7 +1,7 @@
 // Dados de usuários (apenas para demonstração)
 var usuarios = [
-    { nomeusuario: "user1", senha: "password1", email: "user1@example.com" },
-    { nomeusuario: "user2", senha: "password2", email: "user2@example.com" }
+    { nomeusuario: "user1", senha: "03ac674216f3e15c761ee1a5e255f067953623c8b388b4459e13f978d7c846f4", email: "user1@example.com" },
+    { nomeusuario: "user2", senha: "fe2592b42a727e977f055947385b709cc82b16b9a87f88c6abf3900d65d0cdc3", email: "user2@example.com" }
 ];
 
 async function validaFrmLogin() {
