@@ -1,3 +1,23 @@
+// Função para salvar os dados dos usuários na URL
+function salvarUsuariosNaURL() {
+    const usuariosString = JSON.stringify(usuarios);
+    const usuariosBase64 = btoa(usuariosString); // Codifica para base64
+    window.location.hash = encodeURIComponent(usuariosBase64);
+}
+
+// Função para carregar os dados dos usuários da URL
+function carregarUsuariosDaURL() {
+    const usuariosBase64 = window.location.hash.substr(1); // Obtém a parte após o '#'
+    if (usuariosBase64) {
+        const usuariosString = atob(usuariosBase64); // Decodifica de base64
+        usuarios = JSON.parse(usuariosString);
+    }
+}
+
+// Carrega os usuários da URL ao iniciar o script
+carregarUsuariosDaURL();
+
+// Restante do seu código existente abaixo
 // Dados de usuários (apenas para demonstração)
 var usuarios = [
     { nomeusuario: "user1", senha: "03ac674216f3e15c761ee1a5e255f067953623c8b388b4459e13f978d7c846f4", email: "user1@example.com" },
@@ -7,42 +27,14 @@ var usuarios = [
 async function validaFrmLogin() {
     var usuarioInformado = document.getElementById("txtNomeUsuario").value;
     var senhaInformada = document.getElementById("txtSenha").value;
-
+ 
     // Criptografa a senha
-    /*
-    //Aqui, estamos criando uma nova instância do objeto TextEncoder. 
-    Este objeto é usado para converter strings em sequências de bytes 
-    usando uma determinada codificação (nesse caso, provavelmente UTF-8).
-    */
-    const encoder = new TextEncoder(); 
-
-    /*
-    //Usamos o método encode() do TextEncoder para converter a string 
-    senhaInformada em uma matriz de bytes, que é armazenada na constante data.
-    */
-    const data = encoder.encode(senhaInformada); 
-
-    /*
-    // Utilizamos a API crypto.subtle.digest() para gerar um hash criptográfico 
-    da matriz de bytes data. Neste caso, o algoritmo de hash usado é SHA-256. 
-    O resultado é armazenado em um buffer, que é uma representação binária do hash.
-    */
-    const hashBuffer = await crypto.subtle.digest('SHA-256', data); 
-
-    /*
-    Convertendo o hashBuffer (que é uma matriz de bytes) em uma matriz de números 
-    inteiros de 8 bits sem sinal (Uint8Array) e, em seguida, 
-    convertendo isso para um array JavaScript com o método Array.from(). Isso é feito para poder manipular facilmente os bytes do hash.
-    */
-    const hashArray = Array.from(new Uint8Array(hashBuffer)); 
-
-    /*
-    Estamos mapeando cada byte do hash para uma representação hexadecimal, 
-    convertendo cada byte em uma string hexadecimal de dois caracteres usando 
-    toString(16), garantindo que cada string tenha pelo menos dois caracteres 
-    com padStart(2, '0'), e depois juntando todas as strings hexadecimal para 
-    formar a senha criptografada.
-    */
+    const encoder = new TextEncoder();
+    const data = encoder.encode(senhaInformada);
+    const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+ 
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
+ 
     const senhaCriptografada = hashArray.map(byte => byte.toString(16).padStart(2, '0')).join('');
        
     // Verifica se o usuário e senha correspondem a um registro na matriz
@@ -52,7 +44,7 @@ async function validaFrmLogin() {
             return true;
         }
     }
-    
+   
     // Se não corresponder, exibe uma mensagem de erro
     alert("Usuário ou senha inválidos. Tente novamente.");
     return false;
@@ -63,23 +55,26 @@ async function validafrmCadastroUsuario() {
     var emailInformado = document.getElementById("txtEmail").value;
     var senhaInformada = document.getElementById("txtSenha").value;
     var confirmacaoSenhaInformada = document.getElementById("txtConfirmacaoSenha").value;
-
+ 
     // Verifica se as senhas coincidem
     if (senhaInformada !== confirmacaoSenhaInformada) {
         alert("As senhas não coincidem. Por favor, tente novamente.");
         return false;
     }
-
+ 
     // Criptografa a senha
     const encoder = new TextEncoder();
     const data = encoder.encode(senhaInformada);
     const hashBuffer = await crypto.subtle.digest('SHA-256', data);
     const hashArray = Array.from(new Uint8Array(hashBuffer));
     const senhaCriptografada = hashArray.map(byte => byte.toString(16).padStart(2, '0')).join('');
-
+ 
     // Adiciona os dados do novo usuário à matriz
     usuarios.push({ nomeusuario: usuarioInformado, senha: senhaCriptografada, email: emailInformado });
-    
+   
+    // Salva os usuários na URL
+    salvarUsuariosNaURL();
+   
     // Se tudo estiver correto, exibe uma mensagem de sucesso
     alert("Cadastro realizado com sucesso!");
     return true;
